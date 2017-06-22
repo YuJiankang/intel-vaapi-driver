@@ -46,6 +46,7 @@
 #include "vp9_probs.h"
 #include "gen9_vp9_const_def.h"
 
+#define MAX_VP9_ENCODER_FRAMERATE      126
 #define MAX_VP9_ENCODER_SURFACES        64
 
 #define MAX_URB_SIZE                    4096 /* In register */
@@ -3723,6 +3724,8 @@ gen9_encode_vp9_check_parameter(VADriverContextP ctx,
 
             vp9_state->gop_size = encoder_context->brc.gop_size;
             vp9_state->framerate = encoder_context->brc.framerate[0];
+            vp9_state->framerate.num = ((vp9_state->framerate.num / vp9_state->framerate.den) > MAX_VP9_ENCODER_FRAMERATE) ?
+                                                (MAX_VP9_ENCODER_FRAMERATE * vp9_state->framerate.den) : vp9_state->framerate.num;
 
             if (encoder_context->rate_control_mode == VA_RC_CBR ||
                 !encoder_context->brc.target_percentage[0]) {
